@@ -84,6 +84,12 @@ module.exports = function (config, windowParams) {
       authWindow.webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
         onCallback(newUrl);
       });
+      
+      electron.session.defaultSession.webRequest.onBeforeRequest({urls:[`${config.redirectUri}/*`]}, (details, callback) => {
+        const {url} = details;
+        callback({cancel: true, redirectURL: url});
+        onCallback(url);
+      });
     });
   }
 
